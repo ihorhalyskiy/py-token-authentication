@@ -146,9 +146,11 @@ class OrderViewSet(
     viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin
 ):
     authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated, )
     queryset = Order.objects.prefetch_related(
         "tickets__movie_session__movie", "tickets__movie_session__cinema_hall"
     )
+    serializer_class = OrderSerializer
     pagination_class = OrderPagination
 
     def get_queryset(self):
@@ -157,12 +159,8 @@ class OrderViewSet(
     def get_serializer_class(self):
         if self.action == "list":
             return OrderListSerializer
-        return OrderSerializer
 
-    def get_permissions(self):
-        if self.action in ["list", "create"]:
-            return [IsAuthenticated()]
-        return super().get_permissions()
+        return OrderSerializer
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)

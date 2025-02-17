@@ -9,15 +9,5 @@ class IsAdminOrIfAuthenticatedReadOnly(BasePermission):
                 and request.user
                 and request.user.is_authenticated
             )
-            or (
-                request.method
-                in (
-                    "GET",
-                    "POST",
-                )
-                and view.basename == "order"
-                and request.user
-                and request.user.is_authenticated
-            )
             or (request.user and request.user.is_staff)
         )
